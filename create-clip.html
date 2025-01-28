@@ -193,19 +193,20 @@
       };
 
       // Envoi de la requête à l'API Gemini
-      fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyCiqc3pnvpcF8OTj5x6uHf4wvyJKgaOFJ4", requestOptions)
+      fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=VOTRE_CLE_API", requestOptions)
         .then((response) => response.json())
         .then((data) => {
           console.log("Réponse API:", data); // Debug
 
           document.getElementById("loader").style.display = "none"; // Cacher le loader
 
-          if (data && data.candidates && data.candidates[0].content) {
-            document.getElementById("result-text").innerText = data.candidates[0].content;
-            document.getElementById("result-container").style.display = "block";
+          // ✅ Vérification et extraction du texte généré
+          if (data && data.candidates && data.candidates[0].content && data.candidates[0].content.parts) {
+              document.getElementById("result-text").innerText = data.candidates[0].content.parts[0].text;
+              document.getElementById("result-container").style.display = "block";
           } else {
-            document.getElementById("result-text").innerText = "Erreur : Réponse inattendue de l'API.";
-            document.getElementById("result-container").style.display = "block";
+              document.getElementById("result-text").innerText = "Erreur : Réponse inattendue de l'API.";
+              document.getElementById("result-container").style.display = "block";
           }
         })
         .catch((error) => {
@@ -214,6 +215,7 @@
           document.getElementById("result-text").innerText = "Une erreur est survenue.";
           document.getElementById("result-container").style.display = "block";
         });
+
     }
   </script>
 </body>
