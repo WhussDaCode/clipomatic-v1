@@ -88,7 +88,7 @@
     }
 
     /* Bloc d'affichage de la réponse de l'API */
-    .result-container {
+    .result-container, .keyword-container {
       margin-top: 20px;
       padding: 15px;
       background-color: #333;
@@ -99,23 +99,13 @@
       display: none;
     }
 
-    .result-text {
+    .result-text, .keyword-text {
       padding: 10px;
       background-color: #404040;
       border-radius: 6px;
       font-size: 14px;
       color: #ffffff;
       white-space: pre-line;
-    }
-
-    /* Bloc d'affichage du mot clé */
-    .keyword-container {
-      margin-top: 10px;
-      font-size: 16px;
-      font-weight: bold;
-      color: #00c853;
-      text-align: center;
-      display: none;
     }
 
     .loader {
@@ -162,17 +152,17 @@
       <button class="btn-generate" id="generate-keyword-btn" onclick="generateKeyword()" style="display: none;">
         Générer un mot clé
       </button>
+    </div>
 
-      <!-- Affichage du mot clé -->
-      <div class="keyword-container" id="keyword-container">
-        <h3>Mot clé :</h3>
-        <p id="keyword-text"></p>
-      </div>
+    <!-- Zone d'affichage du mot clé généré -->
+    <div class="keyword-container" id="keyword-container">
+      <h3>Mot clé généré :</h3>
+      <p class="keyword-text" id="keyword-text">...</p>
     </div>
   </div>
 
   <script>
-    let generatedText = ""; // Variable pour stocker temporairement le texte généré
+    let generatedText = ""; // Stocke temporairement le texte généré
 
     function generateClip() {
       const userInput = document.getElementById("userInput").value;
@@ -200,29 +190,25 @@
         }]
       });
 
-      const requestOptions = {
+      fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=API_KEY", {
         method: "POST",
         headers: myHeaders,
         body: raw,
         redirect: "follow"
-      };
+      })
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById("loader").style.display = "none";
 
-      fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=API_KEY", requestOptions)
-        .then(response => response.json())
-        .then(data => {
-          console.log("Réponse API:", data);
+        if (data?.candidates?.[0]?.content?.parts?.[0]?.text) {
+          generatedText = data.candidates[0].content.parts[0].text;
 
-          document.getElementById("loader").style.display = "none";
-
-          if (data?.candidates?.[0]?.content?.parts?.[0]?.text) {
-            generatedText = data.candidates[0].content.parts[0].text;
-
-            document.getElementById("result-text").innerText = generatedText;
-            document.getElementById("result-container").style.display = "block";
-            document.getElementById("generate-keyword-btn").style.display = "block";
-          }
-        })
-        .catch(error => console.error("Erreur lors de la requête :", error));
+          document.getElementById("result-text").innerText = generatedText;
+          document.getElementById("result-container").style.display = "block";
+          document.getElementById("generate-keyword-btn").style.display = "block";
+        }
+      })
+      .catch(error => console.error("Erreur lors de la requête :", error));
     }
 
     function generateKeyword() {
