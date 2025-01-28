@@ -9,39 +9,97 @@
       margin: 0;
       padding: 0;
       font-family: Arial, sans-serif;
-      background-color: #2f2f2f;
+      background-color: #2f2f2f; /* Fond gris foncé */
       display: flex;
       flex-direction: column;
-      justify-content: flex-start;
       align-items: center;
-      height: 100vh;
       color: #ffffff;
+      min-height: 100vh;
     }
 
     .container {
       text-align: center;
-      margin-top: 0px; /* Logo plus haut */
+      margin-top: 20px; /* Espacement pour le logo */
+      width: 100%;
+      max-width: 600px; /* Largeur maximale du formulaire */
     }
 
     .logo {
-      max-width: 200px; /* Taille réduite */
+      max-width: 200px; /* Taille réduite du logo */
       width: auto;
       height: auto;
+      margin-bottom: 20px; /* Espacement sous le logo */
       transition: transform 0.3s ease;
       cursor: pointer;
     }
 
     .logo:hover {
+      transform: scale(1.1); /* Effet au survol */
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      width: 100%;
+      text-align: left;
+    }
+
+    label {
+      display: block;
+      font-size: 16px;
+      margin-bottom: 8px;
+      color: #cccccc;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #555555;
+      border-radius: 6px;
+      background-color: #404040;
+      color: #ffffff;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+
+    input[type="text"]:focus {
+      border-color: #00c853; /* Vert pour le focus */
+    }
+
+    .btn-submit {
+      background-color: #00c853; /* Bouton vert */
+      color: #ffffff;
+      padding: 10px 20px;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      text-transform: uppercase;
+    }
+
+    .btn-submit:hover {
       transform: scale(1.1);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
   </style>
 </head>
 <body>
+  <!-- Logo avec lien vers la page d'accueil -->
   <div class="container">
-    <!-- Logo avec un lien vers la page d'accueil -->
     <a href="index.html">
       <img src="assets/img/Clipomaticlogov1.png" alt="Logo Clipomatic" class="logo">
     </a>
+
+    <!-- Formulaire -->
+    <form action="#" method="POST">
+      <div class="form-group">
+        <label for="theme">Thème (mots-clés séparés par des virgules) :</label>
+        <input type="text" id="theme" name="theme" placeholder="Exemple : sport, musique, voyage">
+      </div>
+      <button type="submit" class="btn-submit">Soumettre</button>
+    </form>
   </div>
 </body>
 </html>
