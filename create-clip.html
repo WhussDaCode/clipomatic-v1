@@ -134,7 +134,7 @@
     <!-- Champ de saisie -->
     <div class="form-group">
       <label for="userInput">Entrez vos mots ou votre phrase :</label>
-      <input type="text" id="userInput" placeholder="Exemple : une histoire sur le sport, des faits historique...">
+      <input type="text" id="userInput" placeholder="Exemple : une histoire sur le sport, des faits historiques...">
     </div>
     
     <!-- Bouton pour générer le texte -->
@@ -147,6 +147,11 @@
     <div class="result-container" id="result-container">
       <h3>Texte généré :</h3>
       <p class="result-text" id="result-text">...</p>
+
+      <!-- Bouton Générer un mot clé -->
+      <button class="btn-generate" id="generate-keyword-btn" onclick="generateKeyword()" style="display: none;">
+        Générer un mot clé
+      </button>
     </div>
   </div>
 
@@ -172,7 +177,7 @@
             1. Écris un texte qui attire dès la première phrase pour capter l'attention sur TikTok. 
             2. Le texte doit durer au moins 60 secondes en lecture IA. 
             3. Respecte la demande de l'utilisateur : ${userInput}. 
-            4. Termine par un appel à l'action subtil.` 
+            4. Termine par un appel à l'action subtil.`
           }]
         }]
       });
@@ -194,6 +199,7 @@
           if (data?.candidates?.[0]?.content?.parts?.[0]?.text) {
             document.getElementById("result-text").innerText = data.candidates[0].content.parts[0].text;
             document.getElementById("result-container").style.display = "block";
+            document.getElementById("generate-keyword-btn").style.display = "block"; // Afficher le bouton
           } else {
             document.getElementById("result-text").innerText = "Erreur : Réponse inattendue de l'API.";
             document.getElementById("result-container").style.display = "block";
@@ -205,6 +211,11 @@
           document.getElementById("result-text").innerText = "Une erreur est survenue.";
           document.getElementById("result-container").style.display = "block";
         });
+    }
+
+    function generateKeyword() {
+      alert("Fonctionnalité 'Générer un mot clé' à implémenter !");
+      // Ici, tu peux ajouter une API ou une logique pour générer un mot-clé dynamique
     }
   </script>
 </body>
