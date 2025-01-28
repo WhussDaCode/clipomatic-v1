@@ -87,6 +87,7 @@
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
 
+    /* Bloc d'affichage de la réponse de l'API */
     .result-container {
       margin-top: 20px;
       padding: 15px;
@@ -98,17 +99,31 @@
       display: none;
     }
 
-    textarea {
-      width: 100%;
-      height: 120px;
-      background-color: #404040;
-      color: white;
-      border: 1px solid #555;
+    .result-text {
       padding: 10px;
-      font-size: 14px;
+      background-color: #404040;
       border-radius: 6px;
-      resize: none;
+      font-size: 14px;
+      color: #ffffff;
+      white-space: pre-line;
     }
+
+    .loader {
+      display: none;
+      margin-top: 10px;
+      border: 4px solid #ffffff;
+      border-top: 4px solid #00c853;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
   </style>
 </head>
 <body>
@@ -126,10 +141,13 @@
     <!-- Bouton pour générer le texte -->
     <button class="btn-generate" onclick="generateClip()">Générer</button>
 
+    <!-- Loader pendant l'attente de la réponse API -->
+    <div class="loader" id="loader"></div>
+
     <!-- Zone d'affichage du texte généré -->
     <div class="result-container" id="result-container">
       <h3>Texte généré :</h3>
-      <textarea id="result-text" readonly></textarea>
+      <p class="result-text" id="result-text">...</p>
     </div>
   </div>
 
@@ -142,6 +160,10 @@
         alert("Veuillez entrer des mots-clés.");
         return;
       }
+
+      // Afficher le loader
+      document.getElementById("loader").style.display = "block";
+      document.getElementById("result-container").style.display = "none";
 
       // Création du texte avec les mots-clés de l'utilisateur
       const promptText = `Rédige un texte percutant et fluide, adapté à une lecture à voix haute d’une durée de 30 secondes. 
@@ -175,22 +197,25 @@
       };
 
       // Envoi de la requête à l'API Gemini
-      fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyBc3rSssPKdddxIqV4NBmi3PBDRu3M_wjo", requestOptions)
+      fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=VOTRE_CLE_API", requestOptions)
         .then((response) => response.json())
         .then((data) => {
           console.log("Réponse API:", data); // Debug
 
+          document.getElementById("loader").style.display = "none"; // Cacher le loader
+
           if (data && data.candidates && data.candidates[0].content) {
-            document.getElementById("result-text").value = data.candidates[0].content;
+            document.getElementById("result-text").innerText = data.candidates[0].content;
             document.getElementById("result-container").style.display = "block";
           } else {
-            document.getElementById("result-text").value = "Erreur : Réponse inattendue de l'API.";
+            document.getElementById("result-text").innerText = "Erreur : Réponse inattendue de l'API.";
             document.getElementById("result-container").style.display = "block";
           }
         })
         .catch((error) => {
           console.error("Erreur lors de la requête :", error);
-          document.getElementById("result-text").value = "Une erreur est survenue.";
+          document.getElementById("loader").style.display = "none";
+          document.getElementById("result-text").innerText = "Une erreur est survenue.";
           document.getElementById("result-container").style.display = "block";
         });
     }
