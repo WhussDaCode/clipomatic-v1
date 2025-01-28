@@ -1,4 +1,4 @@
-/* Général */
+/* Fond du body */
 body {
     margin: 0;
     padding: 0;
@@ -6,18 +6,19 @@ body {
     background-color: #2f2f2f; /* Gris foncé mat */
     display: flex;
     justify-content: center;
-    align-items: center;
-    height: 100vh; /* Hauteur de l'écran */
+    align-items: flex-start; /* Positionnement du logo en haut */
+    height: 100vh; /* Prend toute la hauteur de l'écran */
   }
   
   /* Conteneur principal */
   .container {
     text-align: center;
+    margin-top: 50px; /* Espacement entre le haut de la page et le logo */
   }
   
   /* Logo */
   .logo {
-    max-width: 300px; /* Taille du logo adaptée */
-    width: 100%;
+    max-width: 300px; /* Taille maximale du logo */
+    width: auto;
     height: auto;
   }  
