@@ -133,8 +133,8 @@
 
     <!-- Champ de saisie -->
     <div class="form-group">
-      <label for="userInput">Entrez vos mots-clés :</label>
-      <input type="text" id="userInput" placeholder="Exemple : sport, motivation, succès">
+      <label for="userInput">Entrez vos mots ou votre phrase :</label>
+      <input type="text" id="userInput" placeholder="Exemple : une histoire sur le sport, des faits historique...">
     </div>
     
     <!-- Bouton pour générer le texte -->
@@ -156,7 +156,7 @@
       const userInput = document.getElementById("userInput").value;
 
       if (!userInput) {
-        alert("Veuillez entrer des mots-clés.");
+        alert("Veuillez entrer des mots ou une phrase.");
         return;
       }
 
@@ -174,11 +174,10 @@
           {
             parts: [
               {
-                text: `Rédige un texte percutant et fluide, adapté à une lecture à voix haute d’une durée de 30 secondes. 
-                Intègre les mots-clés suivants : ${userInput}, pour raconter quelques chose de vrai en veillant à les mettre en valeur de manière naturelle et impactante. 
-                Utilise un ton inspirant selon les mots-clés et l’objectif. 
+                text: ` Fait un texte qui dur oralement 30 seconde, qui raconte quelques chose concernant : ${userInput}, pour un fais en veillant à les mettre en valeur de manière naturelle et impactante. 
+                Utilise un ton inspirant. 
                 Structure le texte en trois parties : une introduction captivante, un point central clair et une conclusion mémorable. 
-                Le texte doit être engageant, facile à comprendre, et ne pas dépasser 90 mots.`
+                Le texte doit être engageant, facile à comprendre.`
               }
             ]
           }
