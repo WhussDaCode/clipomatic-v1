@@ -223,7 +223,13 @@
       const raw = JSON.stringify({
         contents: [{
           parts: [{
-            text: `Prends le texte suivant : ${generatedText} et crée un mot clé le représentant, ne dis rien d'autre que le mot clé, pas de #. Donne moi 1 mot qui représente parfaitement le thème du texte.`
+            text: `Quel est le thème principale de ce texte en 1 mot clé ? ne dis rien d'autre que le mot en question. Voici quelques exemples :
+                    Texte : 'Un match incroyable avec un panier parfait au dernier moment. Tout tourne autour du basket.'
+                    Mot-clé attendu : 'basket'
+                    Texte : 'Un coureur a dépassé ses limites pour remporter une victoire exceptionnelle.'
+                    Mot-clé attendu : 'course'
+                    Texte : 'L'incroyable exploit d'une équipe qui n'abandonne jamais.'
+                    Mot-clé attendu : 'sport'." : ${generatedText}`
           }]
         }]
       });
