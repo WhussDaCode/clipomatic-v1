@@ -66,7 +66,7 @@
       border-color: #00c853;
     }
 
-    .btn-save {
+    .btn-generate {
       background-color: #00c853;
       color: #ffffff;
       padding: 10px 20px;
@@ -82,54 +82,117 @@
       width: 100%;
     }
 
-    .btn-save:hover {
+    .btn-generate:hover {
       transform: scale(1.1);
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
 
-    .saved-text {
-      margin-top: 15px;
-      font-size: 16px;
-      color: #00c853;
+    .result-container {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #333;
+      border-radius: 6px;
+      width: 100%;
+      text-align: left;
+      color: #ffffff;
       display: none;
+    }
+
+    textarea {
+      width: 100%;
+      height: 120px;
+      background-color: #404040;
+      color: white;
+      border: 1px solid #555;
+      padding: 10px;
+      font-size: 14px;
+      border-radius: 6px;
+      resize: none;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- Logo avec un lien vers la page d'accueil -->
     <a href="index.html">
       <img src="assets/img/Clipomaticlogov1.png" alt="Logo Clipomatic" class="logo">
     </a>
 
     <!-- Champ de saisie -->
     <div class="form-group">
-      <label for="userInput">Entrez votre texte :</label>
-      <input type="text" id="userInput" placeholder="Tapez ici...">
+      <label for="userInput">Entrez vos mots-clés :</label>
+      <input type="text" id="userInput" placeholder="Exemple : sport, motivation, succès">
     </div>
     
-    <!-- Bouton pour stocker la valeur -->
-    <button class="btn-save" onclick="storeInput()">Enregistrer</button>
+    <!-- Bouton pour générer le texte -->
+    <button class="btn-generate" onclick="generateClip()">Générer</button>
 
-    <!-- Zone d'affichage du texte stocké -->
-    <p id="savedText" class="saved-text"></p>
+    <!-- Zone d'affichage du texte généré -->
+    <div class="result-container" id="result-container">
+      <h3>Texte généré :</h3>
+      <textarea id="result-text" readonly></textarea>
+    </div>
   </div>
 
   <script>
-    function storeInput() {
-      // Récupérer la valeur de l'input
+    function generateClip() {
+      // Récupération des mots-clés entrés par l'utilisateur
       const userInput = document.getElementById("userInput").value;
 
-      // Vérifier si l'utilisateur a entré quelque chose
       if (!userInput) {
-        alert("Veuillez entrer un texte.");
+        alert("Veuillez entrer des mots-clés.");
         return;
       }
 
-      // Afficher le texte stocké
-      const savedText = document.getElementById("savedText");
-      savedText.innerText = "Texte enregistré : " + userInput;
-      savedText.style.display = "block";
+      // Création du texte avec les mots-clés de l'utilisateur
+      const promptText = `Rédige un texte percutant et fluide, adapté à une lecture à voix haute d’une durée de 30 secondes. 
+      Intègre les mots-clés suivants : ${userInput}, en veillant à les mettre en valeur de manière naturelle et impactante. 
+      Utilise un ton inspirant selon les mots-clés et l’objectif. 
+      Structure le texte en trois parties : une introduction captivante, un point central clair et une conclusion mémorable. 
+      Le texte doit être engageant, facile à comprendre, et ne pas dépasser 90 mots.`;
+
+      // Configuration des headers de la requête API
+      const myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+
+      // Création de la requête pour l'API
+      const raw = JSON.stringify({
+        contents: [
+          {
+            parts: [
+              {
+                text: promptText
+              }
+            ]
+          }
+        ]
+      });
+
+      const requestOptions = {
+        method: "POST",
+        headers: myHeaders,
+        body: raw,
+        redirect: "follow"
+      };
+
+      // Envoi de la requête à l'API Gemini
+      fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyBc3rSssPKdddxIqV4NBmi3PBDRu3M_wjo", requestOptions)
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Réponse API:", data); // Debug
+
+          if (data && data.candidates && data.candidates[0].content) {
+            document.getElementById("result-text").value = data.candidates[0].content;
+            document.getElementById("result-container").style.display = "block";
+          } else {
+            document.getElementById("result-text").value = "Erreur : Réponse inattendue de l'API.";
+            document.getElementById("result-container").style.display = "block";
+          }
+        })
+        .catch((error) => {
+          console.error("Erreur lors de la requête :", error);
+          document.getElementById("result-text").value = "Une erreur est survenue.";
+          document.getElementById("result-container").style.display = "block";
+        });
     }
   </script>
 </body>
