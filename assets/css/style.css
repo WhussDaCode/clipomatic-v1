@@ -1,0 +1,23 @@
+/* Général */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #2f2f2f; /* Gris foncé mat */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Hauteur de l'écran */
+  }
+  
+  /* Conteneur principal */
+  .container {
+    text-align: center;
+  }
+  
+  /* Logo */
+  .logo {
+    max-width: 300px; /* Taille du logo adaptée */
+    width: 100%;
+    height: auto;
+  }  
