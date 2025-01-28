@@ -9,7 +9,7 @@
       margin: 0;
       padding: 0;
       font-family: Arial, sans-serif;
-      background-color: #2f2f2f; /* Fond gris foncé */
+      background-color: #2f2f2f;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -19,22 +19,22 @@
 
     .container {
       text-align: center;
-      margin-top: 20px; /* Espacement pour le logo */
+      margin-top: 20px;
       width: 100%;
-      max-width: 600px; /* Largeur maximale du formulaire */
+      max-width: 600px;
     }
 
     .logo {
-      max-width: 200px; /* Taille réduite du logo */
+      max-width: 200px;
       width: auto;
       height: auto;
-      margin-bottom: 20px; /* Espacement sous le logo */
+      margin-bottom: 20px;
       transition: transform 0.3s ease;
       cursor: pointer;
     }
 
     .logo:hover {
-      transform: scale(1.1); /* Effet au survol */
+      transform: scale(1.1);
     }
 
     .form-group {
@@ -63,11 +63,11 @@
     }
 
     input[type="text"]:focus {
-      border-color: #00c853; /* Vert pour le focus */
+      border-color: #00c853;
     }
 
     .btn-submit {
-      background-color: #00c853; /* Bouton vert */
+      background-color: #00c853;
       color: #ffffff;
       padding: 10px 20px;
       font-size: 16px;
@@ -77,29 +77,141 @@
       cursor: pointer;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
       text-transform: uppercase;
+      margin-top: 10px;
     }
 
     .btn-submit:hover {
       transform: scale(1.1);
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
+
+    .result-container {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #333;
+      border-radius: 6px;
+      width: 100%;
+      text-align: left;
+      color: #ffffff;
+      display: none;
+    }
+
+    textarea {
+      width: 100%;
+      height: 120px;
+      background-color: #404040;
+      color: white;
+      border: 1px solid #555;
+      padding: 10px;
+      font-size: 14px;
+      border-radius: 6px;
+      resize: none;
+    }
+
+    .copy-btn {
+      background-color: #f805a6;
+      color: #ffffff;
+      padding: 8px 12px;
+      font-size: 14px;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+      display: block;
+      text-transform: uppercase;
+    }
+
+    .copy-btn:hover {
+      background-color: #ee2b54;
+    }
   </style>
 </head>
 <body>
-  <!-- Logo avec lien vers la page d'accueil -->
   <div class="container">
     <a href="index.html">
       <img src="assets/img/Clipomaticlogov1.png" alt="Logo Clipomatic" class="logo">
     </a>
 
     <!-- Formulaire -->
-    <form action="#" method="POST">
-      <div class="form-group">
-        <label for="theme">Thème (mots-clés séparés par des virgules) :</label>
-        <input type="text" id="theme" name="theme" placeholder="Exemple : sport, musique, voyage">
-      </div>
-      <button type="submit" class="btn-submit">Soumettre</button>
-    </form>
+    <div class="form-group">
+      <label for="theme">Thème (mots-clés séparés par des virgules) :</label>
+      <input type="text" id="theme" name="theme" placeholder="Exemple : sport, musique, voyage">
+    </div>
+    <button class="btn-submit" onclick="generateClip()">Générer</button>
+
+    <!-- Affichage du résultat -->
+    <div class="result-container" id="result-container">
+      <h3>Résultat :</h3>
+      <textarea id="result-text" readonly></textarea>
+      <button class="copy-btn" onclick="copyToClipboard()">Copier</button>
+    </div>
   </div>
+
+  <script>
+    function generateClip() {
+      // Récupération des mots-clés entrés par l'utilisateur
+      const keywords = document.getElementById("theme").value;
+
+      if (!keywords) {
+        alert("Veuillez entrer des mots-clés.");
+        return;
+      }
+
+      // Génération du texte avec les mots-clés
+      const promptText = `Rédige un texte percutant et fluide, adapté à une lecture à voix haute d’une durée de 30 secondes. 
+      Intègre les mots-clés suivants : ${keywords}, en veillant à les mettre en valeur de manière naturelle et impactante. 
+      Utilise un ton inspirant selon les mots-clés et l’objectif. 
+      Structure le texte en trois parties : une introduction captivante, un point central clair et une conclusion mémorable. 
+      Le texte doit être engageant, facile à comprendre, et ne pas dépasser 90 mots.`;
+
+      // Création de la requête pour l'API
+      const myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+
+      const raw = JSON.stringify({
+        "contents": [
+          {
+            "parts": [
+              {
+                "text": promptText
+              }
+            ]
+          }
+        ]
+      });
+
+      const requestOptions = {
+        method: "POST",
+        headers: myHeaders,
+        body: raw,
+        redirect: "follow"
+      };
+
+      fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=VOTRE_CLE_API", requestOptions)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data && data.candidates && data.candidates[0].output) {
+            document.getElementById("result-text").value = data.candidates[0].output;
+            document.getElementById("result-container").style.display = "block";
+          } else {
+            document.getElementById("result-text").value = "Erreur : Réponse inattendue de l'API.";
+            document.getElementById("result-container").style.display = "block";
+          }
+        })
+        .catch((error) => {
+          console.error("Erreur lors de la requête :", error);
+          document.getElementById("result-text").value = "Une erreur est survenue.";
+          document.getElementById("result-container").style.display = "block";
+        });
+    }
+
+    function copyToClipboard() {
+      const resultText = document.getElementById("result-text");
+      resultText.select();
+      document.execCommand("copy");
+      alert("Texte copié !");
+    }
+  </script>
 </body>
 </html>
