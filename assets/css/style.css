@@ -1,3 +1,4 @@
+/* Appliquer un fond gris foncé */
 body {
     margin: 0;
     padding: 0;
@@ -5,17 +6,20 @@ body {
     background-color: #2f2f2f; /* Gris foncé mat */
     display: flex;
     justify-content: center;
-    align-items: flex-start;
-    height: 100vh;
+    align-items: flex-start; /* Aligner le contenu en haut */
+    height: 100vh; /* Prend toute la hauteur de l'écran */
   }
   
+  /* Conteneur principal */
   .container {
     text-align: center;
-    margin-top: 50px;
+    margin-top: 50px; /* Espacement entre le haut et le logo */
   }
   
+  /* Style du logo */
   .logo {
-    max-width: 300px;
+    max-width: 300px; /* Largeur maximale du logo */
     width: auto;
     height: auto;
-  }  
+  }
+  
