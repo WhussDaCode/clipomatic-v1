@@ -108,6 +108,16 @@
       white-space: pre-line;
     }
 
+    /* Bloc d'affichage du mot clé */
+    .keyword-container {
+      margin-top: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      color: #00c853;
+      text-align: center;
+      display: none;
+    }
+
     .loader {
       display: none;
       margin-top: 10px;
@@ -152,10 +162,18 @@
       <button class="btn-generate" id="generate-keyword-btn" onclick="generateKeyword()" style="display: none;">
         Générer un mot clé
       </button>
+
+      <!-- Affichage du mot clé -->
+      <div class="keyword-container" id="keyword-container">
+        <h3>Mot clé :</h3>
+        <p id="keyword-text"></p>
+      </div>
     </div>
   </div>
 
   <script>
+    let generatedText = ""; // Variable pour stocker temporairement le texte généré
+
     function generateClip() {
       const userInput = document.getElementById("userInput").value;
 
@@ -189,33 +207,54 @@
         redirect: "follow"
       };
 
-      fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyCiqc3pnvpcF8OTj5x6uHf4wvyJKgaOFJ4", requestOptions)
+      fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=API_KEY", requestOptions)
         .then(response => response.json())
         .then(data => {
-          console.log("Réponse API:", data); // Debugging
+          console.log("Réponse API:", data);
 
           document.getElementById("loader").style.display = "none";
 
           if (data?.candidates?.[0]?.content?.parts?.[0]?.text) {
-            document.getElementById("result-text").innerText = data.candidates[0].content.parts[0].text;
+            generatedText = data.candidates[0].content.parts[0].text;
+
+            document.getElementById("result-text").innerText = generatedText;
             document.getElementById("result-container").style.display = "block";
-            document.getElementById("generate-keyword-btn").style.display = "block"; // Afficher le bouton
-          } else {
-            document.getElementById("result-text").innerText = "Erreur : Réponse inattendue de l'API.";
-            document.getElementById("result-container").style.display = "block";
+            document.getElementById("generate-keyword-btn").style.display = "block";
           }
         })
-        .catch(error => {
-          console.error("Erreur lors de la requête :", error);
-          document.getElementById("loader").style.display = "none";
-          document.getElementById("result-text").innerText = "Une erreur est survenue.";
-          document.getElementById("result-container").style.display = "block";
-        });
+        .catch(error => console.error("Erreur lors de la requête :", error));
     }
 
     function generateKeyword() {
-      alert("Fonctionnalité 'Générer un mot clé' à implémenter !");
-      // Ici, tu peux ajouter une API ou une logique pour générer un mot-clé dynamique
+      if (!generatedText) {
+        alert("Veuillez générer un texte avant de créer un mot clé.");
+        return;
+      }
+
+      const myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+
+      const raw = JSON.stringify({
+        contents: [{
+          parts: [{
+            text: `Prends le texte suivant : ${generatedText} et crée un mot clé le représentant.`
+          }]
+        }]
+      });
+
+      fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=API_KEY", {
+        method: "POST",
+        headers: myHeaders,
+        body: raw,
+        redirect: "follow"
+      })
+      .then(response => response.json())
+      .then(data => {
+        const keyword = data?.candidates?.[0]?.content?.parts?.[0]?.text || "Mot clé non trouvé.";
+        document.getElementById("keyword-text").innerText = keyword;
+        document.getElementById("keyword-container").style.display = "block";
+      })
+      .catch(error => console.error("Erreur lors de la génération du mot clé :", error));
     }
   </script>
 </body>
