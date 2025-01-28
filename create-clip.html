@@ -152,7 +152,6 @@
 
   <script>
     function generateClip() {
-      // Récupération des mots-clés entrés par l'utilisateur
       const userInput = document.getElementById("userInput").value;
 
       if (!userInput) {
@@ -160,30 +159,22 @@
         return;
       }
 
-      // Afficher le loader
       document.getElementById("loader").style.display = "block";
       document.getElementById("result-container").style.display = "none";
 
-      // Configuration des headers de la requête API
       const myHeaders = new Headers();
       myHeaders.append("Content-Type", "application/json");
 
-      // Création de la requête pour l'API avec le prompt directement dans "text"
       const raw = JSON.stringify({
-        contents: [
-          {
-            parts: [
-              {
-                text: `Tu es un assistant créatif spécialisé dans la rédaction de textes captivants, optimisés pour une durée orale exacte. 
-                1. Écris un texte narratif ou informatif qui répond aux critères suivants : Le texte doit attirer l attention dès la première phrase pour inciter les spectateurs de TikTok à regarder et écouter jusqu à la fin. 
-                2. La durée de la lecture par une IA vocale doit être de 60s minimum, sans trop dépasser. 
-                3. Fais ce que lutilisateur te demande donc : ${userInput}. 
-                4. Termine par un appel à laction subtil, encourageant les spectateurs à explorer davantage de contenu lié à cette vidéo. 
-                Fournis un texte clair, structuré, et impactant qui peut aussi servir de sous-titres à la vidéo.`
-              }
-            ]
-          }
-        ]
+        contents: [{
+          parts: [{
+            text: `Tu es un assistant créatif spécialisé dans la rédaction de textes captivants. 
+            1. Écris un texte qui attire dès la première phrase pour capter l'attention sur TikTok. 
+            2. Le texte doit durer au moins 60 secondes en lecture IA. 
+            3. Respecte la demande de l'utilisateur : ${userInput}. 
+            4. Termine par un appel à l'action subtil.` 
+          }]
+        }]
       });
 
       const requestOptions = {
@@ -193,30 +184,27 @@
         redirect: "follow"
       };
 
-      // Envoi de la requête à l'API Gemini
-      fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyCiqc3pnvpcF8OTj5x6uHf4wvyJKgaOFJ4", requestOptions)
-        .then((response) => response.json())
-        .then((data) => {
-          console.log("Réponse API:", data); // Debug
+      fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=API_KEY", requestOptions)
+        .then(response => response.json())
+        .then(data => {
+          console.log("Réponse API:", data); // Debugging
 
-          document.getElementById("loader").style.display = "none"; // Cacher le loader
+          document.getElementById("loader").style.display = "none";
 
-          // ✅ Vérification et extraction du texte généré
-          if (data && data.candidates && data.candidates[0].content && data.candidates[0].content.parts) {
-              document.getElementById("result-text").innerText = data.candidates[0].content.parts[0].text;
-              document.getElementById("result-container").style.display = "block";
+          if (data?.candidates?.[0]?.content?.parts?.[0]?.text) {
+            document.getElementById("result-text").innerText = data.candidates[0].content.parts[0].text;
+            document.getElementById("result-container").style.display = "block";
           } else {
-              document.getElementById("result-text").innerText = "Erreur : Réponse inattendue de l'API.";
-              document.getElementById("result-container").style.display = "block";
+            document.getElementById("result-text").innerText = "Erreur : Réponse inattendue de l'API.";
+            document.getElementById("result-container").style.display = "block";
           }
         })
-        .catch((error) => {
+        .catch(error => {
           console.error("Erreur lors de la requête :", error);
           document.getElementById("loader").style.display = "none";
           document.getElementById("result-text").innerText = "Une erreur est survenue.";
           document.getElementById("result-container").style.display = "block";
         });
-
     }
   </script>
 </body>
